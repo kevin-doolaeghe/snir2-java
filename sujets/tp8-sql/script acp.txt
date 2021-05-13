@@ -1,0 +1,192 @@
+-- phpMyAdmin SQL Dump
+-- version 4.0.3
+-- http://www.phpmyadmin.net
+--
+-- Client: 127.0.0.1
+-- Généré le: Dim 12 Janvier 2014 à 13:35
+-- Version du serveur: 5.6.12-log
+-- Version de PHP: 5.5.0
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+--
+-- Base de données: `acp`
+--
+CREATE DATABASE IF NOT EXISTS `acp` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `acp`;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `acp`
+--
+
+CREATE TABLE IF NOT EXISTS `acp` (
+  `idAcp` int(11) NOT NULL AUTO_INCREMENT,
+  `idProfesseur` int(11) NOT NULL,
+  `idPeriode` int(11) NOT NULL,
+  `intitule` varchar(50) NOT NULL,
+  `nbElevesMax` int(11) NOT NULL,
+  `salle` varchar(20) NOT NULL,
+  `idNiveau` int(11) NOT NULL,
+  PRIMARY KEY (`idAcp`),
+  KEY `idProfesseur` (`idProfesseur`,`idPeriode`,`idNiveau`),
+  KEY `acp_ibfk_3` (`idNiveau`),
+  KEY `acp_ibfk_2` (`idPeriode`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+
+--
+-- Contenu de la table `acp`
+--
+
+INSERT INTO `acp` (`idAcp`, `idProfesseur`, `idPeriode`, `intitule`, `nbElevesMax`, `salle`, `idNiveau`) VALUES
+(1, 1, 1, 'améliorration orthgraphes', 15, 'B123', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `classes`
+--
+
+CREATE TABLE IF NOT EXISTS `classes` (
+  `idClasse` int(11) NOT NULL AUTO_INCREMENT,
+  `idNiveau` int(11) NOT NULL,
+  `nom` varchar(50) NOT NULL,
+  PRIMARY KEY (`idClasse`),
+  KEY `idNiveau` (`idNiveau`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Contenu de la table `classes`
+--
+
+INSERT INTO `classes` (`idClasse`, `idNiveau`, `nom`) VALUES
+(1, 1, '2nde Titanic'),
+(2, 2, '1ère germinal');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `eleves`
+--
+
+CREATE TABLE IF NOT EXISTS `eleves` (
+  `idEleve` int(11) NOT NULL AUTO_INCREMENT,
+  `nom` varchar(50) NOT NULL,
+  `prenom` varchar(50) NOT NULL,
+  `mdp` varchar(20) NOT NULL,
+  `idClasse` int(11) NOT NULL,
+  `mail` varchar(50) NOT NULL,
+  PRIMARY KEY (`idEleve`),
+  KEY `idClasse` (`idClasse`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+
+--
+-- Contenu de la table `eleves`
+--
+
+INSERT INTO `eleves` (`idEleve`, `nom`, `prenom`, `mdp`, `idClasse`, `mail`) VALUES
+(1, 'duterme', 'max', 'toto', 1, ''),
+(2, 'dupire', 'brandon', 'toto', 2, ''),
+(3, 'dupont', 'djaison', 'toto', 1, '');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `niveaux`
+--
+
+CREATE TABLE IF NOT EXISTS `niveaux` (
+  `idNiveau` int(11) NOT NULL AUTO_INCREMENT,
+  `nom` varchar(50) NOT NULL,
+  PRIMARY KEY (`idNiveau`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+
+--
+-- Contenu de la table `niveaux`
+--
+
+INSERT INTO `niveaux` (`idNiveau`, `nom`) VALUES
+(1, 'seconde'),
+(2, 'première'),
+(3, 'terminale'),
+(4, 'BTS1'),
+(5, 'BTS2');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `periodes`
+--
+
+CREATE TABLE IF NOT EXISTS `periodes` (
+  `idPeriode` int(11) NOT NULL AUTO_INCREMENT,
+  `nom` varchar(50) NOT NULL,
+  `dateDebut` date NOT NULL,
+  `dateFin` date NOT NULL,
+  `etat` varchar(10) NOT NULL,
+  PRIMARY KEY (`idPeriode`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+
+--
+-- Contenu de la table `periodes`
+--
+
+INSERT INTO `periodes` (`idPeriode`, `nom`, `dateDebut`, `dateFin`, `etat`) VALUES
+(1, 'periode1', '2014-01-10', '2014-01-31', 'verouillé');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `professeurs`
+--
+
+CREATE TABLE IF NOT EXISTS `professeurs` (
+  `idProfesseur` int(11) NOT NULL AUTO_INCREMENT,
+  `nom` varchar(50) NOT NULL,
+  `prenom` varchar(50) NOT NULL,
+  `mdp` varchar(20) NOT NULL,
+  PRIMARY KEY (`idProfesseur`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+
+--
+-- Contenu de la table `professeurs`
+--
+
+INSERT INTO `professeurs` (`idProfesseur`, `nom`, `prenom`, `mdp`) VALUES
+(1, 'caprio', 'leonardo', 'toto');
+
+--
+-- Contraintes pour les tables exportées
+--
+
+--
+-- Contraintes pour la table `acp`
+--
+ALTER TABLE `acp`
+  ADD CONSTRAINT `acp_ibfk_1` FOREIGN KEY (`idProfesseur`) REFERENCES `professeurs` (`idProfesseur`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `acp_ibfk_2` FOREIGN KEY (`idPeriode`) REFERENCES `periodes` (`idPeriode`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `acp_ibfk_3` FOREIGN KEY (`idNiveau`) REFERENCES `niveaux` (`idNiveau`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `classes`
+--
+ALTER TABLE `classes`
+  ADD CONSTRAINT `classes_ibfk_1` FOREIGN KEY (`idNiveau`) REFERENCES `niveaux` (`idNiveau`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `eleves`
+--
+ALTER TABLE `eleves`
+  ADD CONSTRAINT `eleves_ibfk_1` FOREIGN KEY (`idClasse`) REFERENCES `classes` (`idClasse`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
